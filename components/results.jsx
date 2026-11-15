@@ -74,7 +74,7 @@ export function Results({ files, query, filter, activeFile, onOpen, onMenu, onMo
   return (
     <div className="results-container">
       {!filter && <ResultGroup heading="最佳匹配" files={[first]} query={query} activeFile={activeFile} onOpen={onOpen} onMenu={onMenu} />}
-      {groups.map(([type, items]) => <ResultGroup key={type} heading={type} files={items} query={query} activeFile={activeFile} onOpen={onOpen} onMenu={onMenu} onMore={!filter && items[0].cover ? () => onMore(type) : undefined} />)}
+      {groups.map(([type, items]) => <ResultGroup key={type} heading={type} files={items} query={query} activeFile={activeFile} onOpen={onOpen} onMenu={onMenu} onMore={!filter && type !== '视频' && items[0].cover ? () => onMore(type) : undefined} />)}
     </div>
   );
 }

@@ -32,7 +32,7 @@ export const photos = Array.from({ length: 7 }, (_, index) => ({
 const videos = [
   ['小米 SU7 上市发布会.mp4', '2:12:05', '/videos/小米 SU7 上市发布会.mp4', 'su7-launch-cover', { start: 2960, end: 3002 }], ['小米汽车漂移.mp4', '20:39'],
   ['试驾小米SU7 Ultra.mp4', '48:19'], ['小米汽车官...球纪录诞生.mp4', '26:00'],
-  ['小米 YU7 耐力测试.mp4', '18:00'], ['小米彭程路测曝光.mp4', '19:22'], ['小米 YU7 发布会.jpg', ''],
+  ['小米 YU7 耐力测试.mp4', '18:00'], ['小米彭程路测曝光.mp4', '19:22'],
 ].map(([name, duration, source, cover, matchedSegment], index) => ({
   id: `video-${index}`, name, duration, source, matchedSegment, type: duration ? '视频' : '图片', section: '视频', device: 0,
   cover: cover || `video${index}`, tags: ['汽车漂移', '小米汽车'], path: 'D:\\ 视频 \\ 小米汽车', date: timestamps[0],
