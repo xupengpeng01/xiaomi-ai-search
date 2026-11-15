@@ -64,6 +64,8 @@ export function MediaPlayer({ file, video = false, notice, onClose, onFileAction
   const limitToMatch = useRef(false);
   const matchedSegmentEnded = useRef(false);
   const previousVolume = useRef(60);
+  const volumeControlRef = useRef(null);
+  const volumeDragging = useRef(false);
   const [playing, setPlaying] = useState(!realVideo);
   const [position, setPosition] = useState(realVideo ? 0 : 146);
   const [duration, setDuration] = useState(realVideo ? 0 : 1303);
@@ -75,6 +77,29 @@ export function MediaPlayer({ file, video = false, notice, onClose, onFileAction
   const [savingFrame, setSavingFrame] = useState(false);
   const [mediaError, setMediaError] = useState('');
   const matchedSegment = getMatchedSegment(video ? file.matchedSegment : null, duration);
+
+  useEffect(() => {
+    if (!volumeOpen) return;
+    function dismissVolume(event) {
+      if (!volumeControlRef.current?.contains(event.target)) setVolumeOpen(false);
+    }
+    function finishVolumeChange(event) {
+      if (!volumeDragging.current) return;
+      volumeDragging.current = false;
+      if (event.pointerType === 'touch') return;
+      const bounds = volumeControlRef.current?.getBoundingClientRect();
+      if (!bounds || event.clientX < bounds.left || event.clientX > bounds.right || event.clientY < bounds.top || event.clientY > bounds.bottom) setVolumeOpen(false);
+    }
+    document.addEventListener('pointerdown', dismissVolume);
+    document.addEventListener('pointerup', finishVolumeChange);
+    document.addEventListener('pointercancel', finishVolumeChange);
+    return () => {
+      volumeDragging.current = false;
+      document.removeEventListener('pointerdown', dismissVolume);
+      document.removeEventListener('pointerup', finishVolumeChange);
+      document.removeEventListener('pointercancel', finishVolumeChange);
+    };
+  }, [volumeOpen]);
 
   useEffect(() => {
     if (realVideo || !playing) return;
@@ -230,13 +255,13 @@ export function MediaPlayer({ file, video = false, notice, onClose, onFileAction
       {isPlaying ? (video ? <VectorIcon name="playPause" width="20" height="20" /> : <VectorIcon name="audioPause" width="16" height="16" />) : <span className="play-mark" aria-hidden="true" />}
     </IconButton>
   );
-  const volumeInput = <input type="range" aria-label="音量大小" aria-orientation={video ? 'horizontal' : 'vertical'} min="0" max="100" value={volumeLevel} onChange={(event) => { setVolume(Number(event.target.value)); setMuted(false); }} />;
+  const volumeInput = <input type="range" aria-label="音量大小" aria-orientation={video ? 'horizontal' : 'vertical'} min="0" max="100" value={volumeLevel} onPointerDown={() => { volumeDragging.current = true; }} onChange={(event) => { setVolume(Number(event.target.value)); setMuted(false); }} />;
   const volumeIcon = video ? (volumeLevel ? 'videoVolumeIcon' : 'videoMutedIcon') : (volumeLevel ? 'audioVolume' : 'audioMutedIcon');
   const volumeControl = (
-    <div className={`volume-control ${video ? 'video-volume' : 'audio-volume'}`} data-open={volumeOpen || undefined}
+    <div ref={volumeControlRef} className={`volume-control ${video ? 'video-volume' : 'audio-volume'}`} data-open={volumeOpen || undefined}
       onPointerEnter={() => { setMore(false); setVolumeOpen(true); }}
       onPointerLeave={(event) => {
-        if (event.pointerType !== 'touch' && event.currentTarget.querySelector('input') !== document.activeElement) setVolumeOpen(false);
+        if (event.pointerType !== 'touch' && !volumeDragging.current) setVolumeOpen(false);
       }}
       onFocus={() => { setMore(false); setVolumeOpen(true); }}
       onBlur={(event) => { if (!event.currentTarget.contains(event.relatedTarget) && !event.currentTarget.matches(':hover')) setVolumeOpen(false); }}>
