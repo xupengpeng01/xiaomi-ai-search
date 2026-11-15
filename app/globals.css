@@ -112,14 +112,11 @@ input[type='range'] { accent-color: var(--blue); }
 .result-card { border-radius: 8px; background: white; }
 .file-list { padding: 4px 0; }
 .best-match .file-list { padding: 0; }
-.file-row { display: flex; align-items: center; gap: 8px; width: 100%; min-height: 56px; padding: 8px 12px; border-radius: 8px; text-align: left; }
+.file-row { position: relative; display: flex; align-items: center; gap: 8px; width: 100%; min-height: 56px; padding: 8px 12px; border-radius: 8px; text-align: left; }
 .best-match .file-row { min-height: 82px; padding-block: 12px; }
-.file-row:hover, .file-row[data-menu-active] { background: rgb(0 0 0 / 4%); }
-.file-row[data-file-type='音频'] { position: relative; }
-.file-row[data-file-type='音频']::after { position: absolute; inset: 3px 7px; border-radius: 4px; pointer-events: none; content: ''; }
-.best-match .file-row[data-file-type='音频']::after { inset: 7px; }
-.file-row[data-file-type='音频']:hover, .file-row[data-file-type='音频'][data-menu-active] { background: transparent; }
-.file-row[data-file-type='音频']:hover::after, .file-row[data-file-type='音频'][data-menu-active]::after { background: rgb(0 0 0 / 4%); }
+.file-row::after { position: absolute; inset: 3px 7px; border-radius: 4px; pointer-events: none; content: ''; }
+.best-match .file-row::after { inset: 7px; }
+.file-row:hover::after, .file-row[data-menu-active]::after { background: rgb(0 0 0 / 4%); }
 .file-text { gap: 2px; }
 .file-name { line-height: 19px; }
 .file-path, .file-snippet, .file-date { color: var(--muted); font-size: 11px; line-height: 15px; }
